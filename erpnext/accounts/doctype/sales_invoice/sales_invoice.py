@@ -867,7 +867,8 @@ class SalesInvoice(SellingController):
 
 
 	def calc_values(self):
-		total_market=str(float(self.base_total) * float(self.exchange_rate_difference))
+		total_market=str(float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference))
+		#frappe.throw(total_market)
 		self.exchange_differance_total = total_market
 		self.market_total = str(float(self.exchange_differance_total )+ float(self.total))
 		child = self.append('taxes', {})
