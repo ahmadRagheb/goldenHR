@@ -872,10 +872,10 @@ class SalesInvoice(SellingController):
 		self.market_total = str(float(self.exchange_differance_total )+ float(self.total))
 		child = self.append('taxes', {})
 		child.tax_amount = self.exchange_differance_total
-		child.account_head ="فرق عملات فواتير البيع - D"
+		child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
 		child.charge_type = 'Actual'
 		child.cost_center= 'Main - D'
-		child.description="فرق عملات فواتير البيع - D"
+		child.description="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
 
 
 def get_list_context(context=None):
