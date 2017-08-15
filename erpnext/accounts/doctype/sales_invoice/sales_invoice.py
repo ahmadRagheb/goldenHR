@@ -874,7 +874,7 @@ class SalesInvoice(SellingController):
 		child.tax_amount = self.exchange_differance_total
 		child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
 		child.charge_type = 'Actual'
-		child.cost_center= 'Main - D'
+		#child.cost_center= 'Main - D'
 		child.description="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
 
 
