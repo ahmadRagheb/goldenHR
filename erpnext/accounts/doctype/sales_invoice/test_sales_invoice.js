@@ -1,43 +1,23 @@
-QUnit.module('Sales Invoice');
+/* eslint-disable */
+// rename this file from _test_[name] to test_[name] to activate
+// and remove above this line
 
-QUnit.test("test sales Invoice", function(assert) {
-	assert.expect(4);
+QUnit.test("test: Sales Invoice", function (assert) {
 	let done = assert.async();
-	frappe.run_serially([
-		() => {
-			return frappe.tests.make('Sales Invoice', [
-				{customer: 'Test Customer 1'},
-				{items: [
-					[
-						{'qty': 5},
-						{'item_code': 'Test Product 1'},
-					]
-				]},
-				{update_stock:1},
-				{customer_address: 'Test1-Billing'},
-				{shipping_address_name: 'Test1-Shipping'},
-				{contact_person: 'Contact 1-Test Customer 1'},
-				{taxes_and_charges: 'TEST In State GST'},
-				{tc_name: 'Test Term 1'},
-				{terms: 'This is Test'}
-			]);
-		},
-		() => cur_frm.save(),
-		() => {
-			// get_item_details
-			assert.ok(cur_frm.doc.items[0].item_name=='Test Product 1', "Item name correct");
-			// get tax details
-			assert.ok(cur_frm.doc.taxes_and_charges=='TEST In State GST', "Tax details correct");
-			// get tax account head details
-			assert.ok(cur_frm.doc.taxes[0].account_head=='CGST - '+frappe.get_abbr(frappe.defaults.get_default('Company')), " Account Head abbr correct");
-			// grand_total Calculated
-			assert.ok(cur_frm.doc.grand_total==590, "Grad Total correct");
 
+	// number of asserts
+	assert.expect(1);
+
+	frappe.run_serially('Sales Invoice', [
+		// insert a new Sales Invoice
+		() => frappe.tests.make([
+			// values to be set
+			{key: 'value'}
+		]),
+		() => {
+			assert.equal(cur_frm.doc.key, 'value');
 		},
-		() => frappe.tests.click_button('Submit'),
-		() => frappe.tests.click_button('Yes'),
-		() => frappe.timeout(0.3),
 		() => done()
 	]);
-});
 
+});

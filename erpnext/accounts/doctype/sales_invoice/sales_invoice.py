@@ -1,4 +1,5 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
+# -*- coding: utf-8 -*-
+#  Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
@@ -99,6 +100,9 @@ class SalesInvoice(SellingController):
 		self.set_billing_hours_and_amount()
 		self.update_timesheet_billing_for_project()
 		self.set_status()
+		self.calc_values()
+
+
 
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
@@ -861,6 +865,19 @@ class SalesInvoice(SellingController):
 						serial_no, sales_invoice
 					)))
 
+
+	def calc_values(self):
+		total_market=str(float(self.base_total) * float(self.exchange_rate_difference))
+		self.exchange_differance_total = total_market
+		self.market_total = str(float(self.exchange_differance_total )+ float(self.total))
+		child = self.append('taxes', {})
+		child.tax_amount = self.exchange_differance_total
+		child.account_head ="فرق عملات فواتير البيع - D"
+		child.charge_type = 'Actual'
+		child.cost_center= 'Main - D'
+		child.description="فرق عملات فواتير البيع - D"
+
+
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
 	list_context = get_list_context(context)
@@ -931,6 +948,7 @@ def make_delivery_note(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	return doclist
+
 
 @frappe.whitelist()
 def make_sales_return(source_name, target_doc=None):

@@ -184,6 +184,10 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 	tc_name: function() {
 		this.get_terms();
 	},
+	market_exchange_rate:function(){
+        this.frm.doc.exchange_rate_difference= String(this.frm.doc.conversion_rate - this.frm.doc.market_exchange_rate);
+        			this.frm.refresh_field('exchange_rate_difference');
+	},
 
 	customer: function() {
 		var me = this;
@@ -581,3 +585,4 @@ var calculate_total_billing_amount =  function(frm) {
 
 	refresh_field('total_billing_amount')
 }
+
