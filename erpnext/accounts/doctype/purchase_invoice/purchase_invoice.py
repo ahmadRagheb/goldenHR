@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
@@ -37,6 +38,9 @@ class PurchaseInvoice(BuyingController):
 		}]
 
 	def validate(self):
+		if not self.market_exchange_rate or  not self.my_exchange_rate or not self.exchange_rate_difference  :
+			frappe.throw("please enter vlaues to CURRENCY AND PRICE LIST value")
+
 		if not self.is_opening:
 			self.is_opening = 'No'
 
@@ -71,6 +75,7 @@ class PurchaseInvoice(BuyingController):
 		self.validate_fixed_asset_account()
 		self.create_remarks()
 		self.set_status()
+		self.calc_values()
 
 	def validate_cash(self):
 		if not self.cash_bank_account and flt(self.paid_amount):
@@ -374,6 +379,50 @@ class PurchaseInvoice(BuyingController):
 					"against_voucher_type": self.doctype,
 				}, self.party_account_currency)
 			)
+			if float(self.exchange_differance_total) >  0  :
+				gl_entries.append(
+					self.get_gl_dict({
+						"account": "الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا",
+						"against": self.against_expense_account,
+						"credit_in_account_currency": self.exchange_differance_total,
+						"credit": self.exchange_differance_total,
+						"against_voucher": self.return_against if cint(self.is_return) else self.name,
+						"against_voucher_type": self.doctype,
+					})
+				)
+				gl_entries.append(
+					self.get_gl_dict({
+						"against": "الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا",
+						"account": self.against_expense_account,
+						"debit_in_account_currency": self.exchange_differance_total,
+						"debit": self.exchange_differance_total,
+						"against_voucher": self.return_against if cint(self.is_return) else self.name,
+						"against_voucher_type": self.doctype,
+					})
+				)
+
+			elif float(self.exchange_differance_total) < float(0.0) :
+				gl_entries.append(
+					self.get_gl_dict({
+						"account": "الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا",
+						"against": self.against_expense_account,
+						"debit_in_account_currency": self.exchange_differance_total,
+						"debit": self.exchange_differance_total,
+						"against_voucher": self.return_against if cint(self.is_return) else self.name,
+						"against_voucher_type": self.doctype,
+					})
+				)
+				gl_entries.append(
+					self.get_gl_dict({
+						"against": "الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا",
+						"account": self.against_expense_account,
+						"credit_in_account_currency": self.exchange_differance_total,
+						"credit": self.exchange_differance_total,
+						"against_voucher": self.return_against if cint(self.is_return) else self.name,
+						"against_voucher_type": self.doctype,
+					})
+				)
+
 
 	def make_item_gl_entries(self, gl_entries):
 		# item gl entries
@@ -669,6 +718,19 @@ class PurchaseInvoice(BuyingController):
 
 	def on_recurring(self, reference_doc):
 		self.due_date = None
+
+	def calc_values(self):
+		total_market=str(float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference))
+		#frappe.throw(total_market)
+		self.exchange_differance_total = total_market
+		# self.market_total = str(float(self.exchange_differance_total )+ float(self.total))
+		# child = self.append('taxes', {})
+		# child.tax_amount = self.exchange_differance_total
+		# child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا"
+		# child.charge_type = 'Actual'
+		# child.category = 'Total'
+		# child.add_deduct_tax = 'Deduct'
+		# child.description="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مشتريات - اا"
 
 @frappe.whitelist()
 def make_debit_note(source_name, target_doc=None):

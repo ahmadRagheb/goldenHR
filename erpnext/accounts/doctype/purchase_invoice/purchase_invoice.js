@@ -164,7 +164,11 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 		$.each(this.frm.doc["items"] || [], function(i, row) {
 			if(row.purchase_receipt) frappe.model.clear_doc("Purchase Receipt", row.purchase_receipt)
 		})
+	},	market_exchange_rate:function(){
+        this.frm.doc.exchange_rate_difference= String(this.frm.doc.my_exchange_rate - this.frm.doc.market_exchange_rate);
+        			this.frm.refresh_field('exchange_rate_difference');
 	},
+
 
 	make_debit_note: function() {
 		frappe.model.open_mapped_doc({
