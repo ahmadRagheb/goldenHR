@@ -38,8 +38,10 @@ class PurchaseInvoice(BuyingController):
 		}]
 
 	def validate(self):
-		if not self.market_exchange_rate or  not self.my_exchange_rate or not self.exchange_rate_difference  :
-			frappe.throw("please enter vlaues to CURRENCY AND PRICE LIST value")
+		if not self.market_exchange_rate :
+			frappe.throw("please enter Market exchange rate ")
+		if  not self.my_exchange_rate :
+			frappe.throw("please enter my exchange rete value")
 
 		if not self.is_opening:
 			self.is_opening = 'No'
