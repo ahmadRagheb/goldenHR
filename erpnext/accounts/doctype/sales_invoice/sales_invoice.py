@@ -100,12 +100,12 @@ class SalesInvoice(SellingController):
 		self.set_billing_hours_and_amount()
 		self.update_timesheet_billing_for_project()
 		self.set_status()
-		self.calc_values()
 
 
 
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
+		self.calc_values()
 
 	def on_submit(self):
 		self.validate_pos_paid_amount()
