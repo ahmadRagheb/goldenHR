@@ -390,6 +390,7 @@ class PurchaseInvoice(BuyingController):
 						"credit": self.exchange_differance_total,
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
+						"cost_center": "Main - اا",
 					})
 				)
 				gl_entries.append(
@@ -400,6 +401,8 @@ class PurchaseInvoice(BuyingController):
 						"debit": self.exchange_differance_total,
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
+						"cost_center": "Main - اا",
+
 					})
 				)
 
@@ -412,6 +415,9 @@ class PurchaseInvoice(BuyingController):
 						"debit": self.exchange_differance_total,
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
+						"cost_center": "Main - اا",
+
+						
 					})
 				)
 				gl_entries.append(
@@ -422,6 +428,7 @@ class PurchaseInvoice(BuyingController):
 						"credit": self.exchange_differance_total,
 						"against_voucher": self.return_against if cint(self.is_return) else self.name,
 						"against_voucher_type": self.doctype,
+						"cost_center": "Main - اا",
 					})
 				)
 
