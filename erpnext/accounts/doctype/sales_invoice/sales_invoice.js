@@ -462,6 +462,7 @@ cur_frm.cscript.cost_center = function(doc, cdt, cdn) {
 	erpnext.utils.copy_value_in_all_row(doc, cdt, cdn, "items", "cost_center");
 }
 
+
 cur_frm.set_query("debit_to", function(doc) {
 	// filter on Account
 	if (doc.customer) {

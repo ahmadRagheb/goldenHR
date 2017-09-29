@@ -106,6 +106,8 @@ class SalesInvoice(SellingController):
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
 		self.calc_values()
+		self.profit_margin_calc()
+
 
 	def on_submit(self):
 		self.validate_pos_paid_amount()
@@ -864,6 +866,24 @@ class SalesInvoice(SellingController):
 					frappe.throw(_("Serial Number: {0} is already referenced in Sales Invoice: {1}".format(
 						serial_no, sales_invoice
 					)))
+
+	def profit_margin_calc(self):
+		profit_margin = self.profit_margin
+		items = self.items
+		length= len(items)
+		total= self.total
+		percentage_array=[]
+
+		for d in items:
+			rate = d.rate
+			percentage = rate / total 
+			#percentage_array.append(percentage)
+			d.rate=(profit_margin*percentage)+rate
+
+
+		for a in percentage_array:
+			pass
+		# frappe.throw(str(strs)+'')
 
 
 	def calc_values(self):
