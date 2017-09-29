@@ -881,10 +881,6 @@ class SalesInvoice(SellingController):
 			d.rate=(profit_margin*percentage)+rate
 
 
-		for a in percentage_array:
-			pass
-		# frappe.throw(str(strs)+'')
-
 
 	def calc_values(self):
 		total_market=str(float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference))
