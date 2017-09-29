@@ -77,7 +77,13 @@ class PurchaseInvoice(BuyingController):
 		self.validate_fixed_asset_account()
 		self.create_remarks()
 		self.set_status()
+
+
+
+	def before_save(self):
 		self.calc_values()
+		self.profit_margin_calc()
+
 
 	def validate_cash(self):
 		if not self.cash_bank_account and flt(self.paid_amount):
@@ -727,6 +733,26 @@ class PurchaseInvoice(BuyingController):
 
 	def on_recurring(self, reference_doc):
 		self.due_date = None
+
+
+
+	def profit_margin_calc(self):
+		profit_margin = self.profit_margin
+		items = self.items
+		length= len(items)
+		total= self.total
+		percentage_array=[]
+
+		for d in items:
+			rate = d.rate
+			percentage = rate / total 
+			#percentage_array.append(percentage)
+			d.rate=(profit_margin*percentage)+rate
+
+
+
+
+
 
 	def calc_values(self):
 		total_market=str(float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference))
