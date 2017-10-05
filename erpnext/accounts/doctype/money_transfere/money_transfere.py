@@ -26,14 +26,26 @@ class MoneyTransfere(Document):
 			"parent_account":"حساب ارسال"+" - "+self.abbr })
 		self.dummy_from=dummy_from[0][0]
 
+	def on_cancel(self):
+		pe = frappe.get_value("Payment Entry", filters = {"transfere_reference": self.name}, fieldname = "name")
+		if pe:
+			
+			pe_doc = frappe.get_doc("Payment Entry", pe)
+			pe_doc.cancel()
+		je = frappe.get_value("Journal Entry Account", filters = {"reference_name": self.name}, fieldname = "parent")
+		if je:
+
+			je_doc = frappe.get_doc("Journal Entry", je)
+			je_doc.cancel()
+
 	def validate_transfere(self):
 		if self.from_company != self.to_company:
 			# sending_account = "حساب ارسال الى " + self.to_company
 			# receiving_account = "حساب استلام من " + self.from_company
 			# self.add_account_for_company(sending_account, self.to_company, "Liability")
 			# self.add_account_for_company(receiving_account, self.from_company, "Expense")
-			self.add_payment_entry(self.from_account,self.dummy_from, self.from_company)
-			self.add_journal_entry(self.to_account,"حساب استقبال من Eye - o", self.to_company)
+			self.add_payment_entry(self.from_account, self.dummy_from, self.from_company)
+			self.add_journal_entry(self.to_account,self.dummy_to, self.to_company)
 		else:
 			self.add_payment_entry(self.from_account, self.to_account, self.from_company)
 
@@ -74,11 +86,8 @@ class MoneyTransfere(Document):
 		pe.received_amount = self.transfered_amount
 		pe.posting_date = nowdate()
 		pe.mode_of_payment = self.mode_of_payment
+		pe.transfere_reference = self.name
 
-		pe.append("references", {
-			"reference_doctype": "Money Transfere",
-			"reference_name": self.name
-		})
 		pe.insert()
 		pe.submit()
 		# pe.setup_party_account_field()
@@ -94,20 +103,24 @@ class MoneyTransfere(Document):
 		# 	"amount": 500
 		# })
 	def add_journal_entry(self, account1, account2, company):
+		default_cost = frappe.get_value("Company", filters = {"name":company}, fieldname = "cost_center")
 		jv = frappe.new_doc("Journal Entry")
 		jv.posting_date = nowdate()
 		jv.company = company
 		jv.voucher_type = "Opening Entry"
 		jv.set("accounts", [
 			{
-				"account": account1,
-				"credit_in_account_currency": self.transfered_amount,
-				"cost_center": self.cost_center
-			}, {
 				"account": account2,
+				"credit_in_account_currency": self.transfered_amount,
+				"cost_center": default_cost,
+				"reference_type": "Money Transfere",
+				"reference_name": self.name
+			}, {
+				"account": account1,
 				"debit_in_account_currency": self.transfered_amount,
-				"cost_center": self.cost_center	
-
+				"cost_center": default_cost,
+				"reference_type": "Money Transfere",
+				"reference_name": self.name
 			}
 		])
 		jv.insert()
