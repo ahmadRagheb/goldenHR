@@ -878,7 +878,6 @@ class SalesInvoice(SellingController):
 			for d in items:
 				rate = d.rate
 				percentage = rate / total 
-				#percentage_array.append(percentage)
 				d.rate=(profit_margin*percentage)+rate
 
 
