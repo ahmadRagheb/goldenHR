@@ -12,13 +12,28 @@ class MoneyTransfere(Document):
 	def on_submit(self):
 		self.validate_transfere()
 
+	def validate(self):
+		self.get_dummy_accounts()
+
+
+	def get_dummy_accounts(self):
+		dummy_to = frappe.db.get_values("Account", {"name": "حساب استلام من"+" - "+self.from_company + " - "+self.abbr_to,
+			"company": self.to_company,
+			"parent_account":"حساب استلام من"+" - "+self.abbr_to })
+		self.dummy_to=dummy_to[0][0]
+
+		dummy_from = frappe.db.get_values("Account", {"name": "حساب ارسال الي"+" - "+self.to_company + " - "+self.abbr,
+			"company": self.from_company,
+			"parent_account":"حساب ارسال"+" - "+self.abbr })
+		self.dummy_from=dummy_from[0][0]
+
 	def validate_transfere(self):
 		if self.from_company != self.to_company:
 			# sending_account = "حساب ارسال الى " + self.to_company
 			# receiving_account = "حساب استلام من " + self.from_company
 			# self.add_account_for_company(sending_account, self.to_company, "Liability")
 			# self.add_account_for_company(receiving_account, self.from_company, "Expense")
-			self.add_payment_entry(self.from_account, "حساب ارسال الى other - اا", self.from_company)
+			self.add_payment_entry(self.from_account,self.dummy_from, self.from_company)
 			self.add_journal_entry(self.to_account,"حساب استقبال من Eye - o", self.to_company)
 		else:
 			self.add_payment_entry(self.from_account, self.to_account, self.from_company)
@@ -88,11 +103,11 @@ class MoneyTransfere(Document):
 			{
 				"account": account1,
 				"credit_in_account_currency": self.transfered_amount,
-				"cost_center": "Main - o"
+				"cost_center": self.cost_center
 			}, {
 				"account": account2,
 				"debit_in_account_currency": self.transfered_amount,
-				"cost_center": "Main - o"
+				"cost_center": self.cost_center
 
 			}
 		])
