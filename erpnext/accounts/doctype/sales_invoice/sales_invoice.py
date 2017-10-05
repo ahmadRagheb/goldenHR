@@ -868,25 +868,26 @@ class SalesInvoice(SellingController):
 					)))
 
 	def profit_margin_calc(self):
-		profit_margin = self.profit_margin
-		items = self.items
-		length= len(items)
-		total= self.total
-		percentage_array=[]
+		if self.profit_margin:
+			profit_margin = self.profit_margin
+			items = self.items
+			length= len(items)
+			total= self.total
+			percentage_array=[]
 
-		for d in items:
-			rate = d.rate
-			percentage = rate / total 
-			#percentage_array.append(percentage)
-			d.rate=(profit_margin*percentage)+rate
+			for d in items:
+				rate = d.rate
+				percentage = rate / total 
+				#percentage_array.append(percentage)
+				d.rate=(profit_margin*percentage)+rate
 
 
 
 	def calc_values(self):
-		total_market=str(float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference))
-		#frappe.throw(total_market)
+		total_market=float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference)
+		# frappe.throw(total_market)
 		self.exchange_differance_total = total_market
-		self.market_total = str(float(self.exchange_differance_total )+ float(self.total))
+		self.market_total = str(self.exchange_differance_total+self.total)
 		child = self.append('taxes', {})
 		child.tax_amount = self.exchange_differance_total
 		child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
