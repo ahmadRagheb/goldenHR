@@ -14,39 +14,41 @@ class MoneyTransfere(Document):
 
 	def validate_transfere(self):
 		if self.from_company != self.to_company:
-			sending_account = "حساب ارسال الى " + self.to_company
-			receiving_account = "حساب استلام من " + self.from_company
-			self.add_account_for_company(sending_account, self.to_company, "Expense")
-			self.add_account_for_company(receiving_account, self.from_company, "Liability")
-			self.add_payment_entry(self.from_account, sending_account, self.from_company)
-			self.add_journal_entry(self.to_account,receiving_account, self.to_company)
-
+			# sending_account = "حساب ارسال الى " + self.to_company
+			# receiving_account = "حساب استلام من " + self.from_company
+			# self.add_account_for_company(sending_account, self.to_company, "Liability")
+			# self.add_account_for_company(receiving_account, self.from_company, "Expense")
+			self.add_payment_entry(self.from_account, "حساب ارسال الى other - E", self.from_company)
+			self.add_journal_entry(self.to_account,"حساب استقبال من Eye - o", self.to_company)
+		else:
+			self.add_payment_entry(self.from_account, self.to_account, self.from_company)
 
 
 	def add_account_for_company(self, account, company, r_type):
-		pacc_name = ""
-		if r_type == "Expense":
-			pacc_name = "حساب ارسال - E"
-		elif r_type == "Liability":
-			pacc_name = "حساب استقبال - o"
+		pass
+		# pacc_name = ""
+		# if r_type == "Expense":
+		# 	pacc_name = "حساب ارسال - E"
+		# elif r_type == "Liability":
+		# 	pacc_name = "حساب استقبال - o"
 
-		# if not frappe.db.exists("Account", pacc_name):
-		# 	pacc = frappe.new_doc("Account")
-		# 	pacc.account_name = pacc_name
-		# 	pacc.root_type = r_type
-		# 	pacc.is_group = 1
-		# 	pacc.parent_account = ""
-		# 	pacc.company = company
-		# 	pacc.flags.ignore_validate = True
-		# 	pacc.insert()
+		# # if not frappe.db.exists("Account", pacc_name):
+		# # 	pacc = frappe.new_doc("Account")
+		# # 	pacc.account_name = pacc_name
+		# # 	pacc.root_type = r_type
+		# # 	pacc.is_group = 1
+		# # 	pacc.parent_account = ""
+		# # 	pacc.company = company
+		# # 	pacc.flags.ignore_validate = True
+		# # 	pacc.insert()
 
-		if not frappe.db.exists("Account", account):
-			acc = frappe.new_doc("Account")
-			acc.account_name = account
-			acc.company = company
-			acc.parent_account = pacc_name
-			acc.is_group = 0
-			acc.insert()
+		# if not frappe.db.exists("Account", account):
+		# 	acc = frappe.new_doc("Account")
+		# 	acc.account_name = account
+		# 	acc.company = company
+		# 	acc.parent_account = pacc_name
+		# 	acc.is_group = 0
+		# 	acc.insert()
 
 	def add_payment_entry(self, paid_from, paid_to, company):
 		pe = frappe.new_doc("Payment Entry")
@@ -85,14 +87,13 @@ class MoneyTransfere(Document):
 		jv.set("accounts", [
 			{
 				"account": account1,
-				"debit": self.transfered_amount,
-				"reference_type": "Money Transfere",
-				"reference_name": self.name
+				"credit_in_account_currency": self.transfered_amount,
+				"cost_center": "Main - o"
 			}, {
 				"account": account2,
-				"credit": self.transfered_amount,
-				"reference_type": "Money Transfere",
-				"reference_name": self.name
+				"debit_in_account_currency": self.transfered_amount,
+				"cost_center": "Main - o"
+
 			}
 		])
 		jv.insert()
