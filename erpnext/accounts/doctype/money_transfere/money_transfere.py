@@ -18,7 +18,7 @@ class MoneyTransfere(Document):
 			# receiving_account = "حساب استلام من " + self.from_company
 			# self.add_account_for_company(sending_account, self.to_company, "Liability")
 			# self.add_account_for_company(receiving_account, self.from_company, "Expense")
-			self.add_payment_entry(self.from_account, "حساب ارسال الى other - E", self.from_company)
+			self.add_payment_entry(self.from_account, "حساب ارسال الى other - اا", self.from_company)
 			self.add_journal_entry(self.to_account,"حساب استقبال من Eye - o", self.to_company)
 		else:
 			self.add_payment_entry(self.from_account, self.to_account, self.from_company)
