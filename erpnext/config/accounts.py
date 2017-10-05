@@ -57,6 +57,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Money Transfere",
+					"description": _("Transfere Money between Companies.")
+				},
+				{
+					"type": "doctype",
 					"name": "Journal Entry",
 					"description": _("Accounting journal entries.")
 				},

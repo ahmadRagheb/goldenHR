@@ -883,16 +883,17 @@ class SalesInvoice(SellingController):
 
 
 	def calc_values(self):
-		total_market=float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference)
-		# frappe.throw(total_market)
-		self.exchange_differance_total = total_market
-		self.market_total = str(self.exchange_differance_total+self.total)
-		child = self.append('taxes', {})
-		child.tax_amount = self.exchange_differance_total
-		child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
-		child.charge_type = 'Actual'
-		child.cost_center= 'Main - اا'
-		child.description="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
+		if self.exchange_rate_difference:
+			total_market=float(float(self.total)/float(self.market_exchange_rate)) * float(self.exchange_rate_difference)
+			# frappe.throw(total_market)
+			self.exchange_differance_total = total_market
+			self.market_total = str(self.exchange_differance_total+self.total)
+			child = self.append('taxes', {})
+			child.tax_amount = self.exchange_differance_total
+			child.account_head ="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
+			child.charge_type = 'Actual'
+			child.cost_center= 'Main - اا'
+			child.description="الفرق بين سعر بيع العملة الصعبة والعملة المحلية مبيعات - اا"
 
 
 def get_list_context(context=None):
