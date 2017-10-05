@@ -15,7 +15,6 @@ class MoneyTransfere(Document):
 	def validate(self):
 		self.get_dummy_accounts()
 
-
 	def get_dummy_accounts(self):
 		dummy_to = frappe.db.get_values("Account", {"name": "حساب استلام من"+" - "+self.from_company + " - "+self.abbr_to,
 			"company": self.to_company,
@@ -107,7 +106,7 @@ class MoneyTransfere(Document):
 			}, {
 				"account": account2,
 				"debit_in_account_currency": self.transfered_amount,
-				"cost_center": self.cost_center
+				"cost_center": self.cost_center	
 
 			}
 		])
