@@ -26,7 +26,7 @@ class MoneyTransfere(Document):
 			"parent_account":"حساب ارسال"+" - "+self.abbr })
 		self.dummy_from=dummy_from[0][0]
 
-	def on_cancel(self):
+	def before_cancel(self):
 		pe = frappe.get_value("Payment Entry", filters = {"transfere_reference": self.name}, fieldname = "name")
 		if pe:
 			
